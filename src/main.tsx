@@ -5,6 +5,6 @@ import { BrowserRouter } from "react-router-dom"// to make app.tsx the router
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
-        <App />//to make app.tsx the router
+        <App />
     </BrowserRouter>
 )

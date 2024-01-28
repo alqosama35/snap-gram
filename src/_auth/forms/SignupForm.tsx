@@ -18,7 +18,8 @@ import { Input } from "@/components/ui/input"
 import { signupValidation } from "@/lib/validation"
 import { z } from "zod"
 import { Loader } from "lucide-react"
- const isLoading = false;//for the submit butoon process
+import { createUserAccount } from "@/lib/appwrite/api"
+ const isLoading = false;//for the submit butoon loading
  
 
 const SignupForm = () => {
@@ -28,15 +29,14 @@ const SignupForm = () => {
       name:"",
       username: "",
       email: "",
-      password:"",
+      password:"", 
     },
   })
  
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof signupValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof signupValidation>) {
+    const newUser = await createUserAccount(values);
+    console.log(newUser)
   }
   return (
     
@@ -47,7 +47,7 @@ const SignupForm = () => {
         
         
       <form onSubmit={form.handleSubmit(onSubmit)} 
-      className="flex flex-col w-full gap-5">
+      className="flex flex-col w-full h-full gap-5">
         
         <FormField
           control={form.control}
@@ -60,6 +60,7 @@ const SignupForm = () => {
               <FormControl>
                 <Input type="text" className="shad-input" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -75,6 +76,7 @@ const SignupForm = () => {
               <FormControl>
                 <Input type="text" className="shad-input" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -89,6 +91,7 @@ const SignupForm = () => {
               <FormControl>
                 <Input type="email" className="shad-input" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -103,6 +106,7 @@ const SignupForm = () => {
               <FormControl>
                 <Input type="password" className="shad-input" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
