@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,11 +17,18 @@ import { Input } from "@/components/ui/input"
 import { signupValidation } from "@/lib/validation"
 import { z } from "zod"
 import { Loader } from "lucide-react"
-import { createUserAccount } from "@/lib/appwrite/api"
- const isLoading = false;//for the submit butoon loading
+import { useToast } from "@/components/ui/use-toast"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
+import { signInAccount } from "@/lib/appwrite/api"
+
+
+
  
+ const {mutateAsync: createUserAccount, isLoading: isCreatingUser} = useCreateUserAccount();
+ const {mutateAsync: signInAccount, isLoading: isSigningIn} = useSignInAccount();
 
 const SignupForm = () => {
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof signupValidation>>({
     resolver: zodResolver(signupValidation),
     defaultValues: {
@@ -36,9 +42,19 @@ const SignupForm = () => {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signupValidation>) {
     const newUser = await createUserAccount(values);
-    console.log(newUser)
+    if(!newUser) {
+      return toast({title:"Sign up failed. please try again"});
+    }
+
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    })
+    if(!session){
+      return toast({title:"Sign in faile. Please try again."})
+    }
   }
-  return (
+  return ( 
     
       <Form {...form} >
         <div className="sm:w-420 flex-center flex-col">
@@ -111,7 +127,7 @@ const SignupForm = () => {
           )}
         />
         <Button className="shad-button_primary" type="submit">
-          {isLoading? 
+          {isCreatingUser? 
             <div className="flex flex-center gap-2">
               <Loader /> Loading...
             </div>
@@ -122,7 +138,9 @@ const SignupForm = () => {
         </p>
       </form>
       </div>
+      
     </Form>
+    
     
   )
 }
