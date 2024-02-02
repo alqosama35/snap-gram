@@ -4,6 +4,7 @@ export type INavLink = {
     label: string;
   };
   
+  
   export type IUpdateUser = {
     userId: string;
     name: string;
@@ -46,3 +47,12 @@ export type INavLink = {
     username: string;
     password: string;
   };
+
+  export type IContextType = {
+    user: IUser;
+    isLoading: boolean;
+    setUser: React.Dispatch<React.SetStateAction<boolean>>;
+    isAuthenticated: boolean;
+    setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+    checkAuthUser: ()=> Promise<boolean>;
+  }
